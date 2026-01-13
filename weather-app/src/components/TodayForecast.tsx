@@ -1,4 +1,5 @@
 import { Cloud, CloudRain, CloudSnow, Sun } from 'lucide-react'
+import { useThemeStore } from '../store/themeStore'
 
 interface TodayForecastProps {
     hourlyData: {
@@ -9,15 +10,17 @@ interface TodayForecastProps {
 }
 
 export default function TodayForecast({ hourlyData }: TodayForecastProps) {
+    const isDark = useThemeStore((state) => state.isDark)
+
     const getWeatherIcon = (code: number, size = 24) => {
-        const props = { size };
+        const props = { size, strokeWidth: 2 };
         if ([0, 1].includes(code)) return <Sun {...props} style={{ color: '#fbbf24' }} />;
-        if ([2, 3].includes(code)) return <Cloud {...props} style={{ color: '#93c5fd' }} />;
+        if ([2, 3].includes(code)) return <Cloud {...props} style={{ color: isDark ? '#93c5fd' : '#3b82f6' }} />;
         if ([45, 48, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code))
-            return <CloudRain {...props} style={{ color: '#60a5fa' }} />;
+            return <CloudRain {...props} style={{ color: isDark ? '#60a5fa' : '#2563eb' }} />;
         if ([71, 73, 75, 77, 85, 86].includes(code))
-            return <CloudSnow {...props} style={{ color: '#bfdbfe' }} />;
-        return <Cloud {...props} style={{ color: '#93c5fd' }} />;
+            return <CloudSnow {...props} style={{ color: isDark ? '#bfdbfe' : '#60a5fa' }} />;
+        return <Cloud {...props} style={{ color: isDark ? '#93c5fd' : '#3b82f6' }} />;
     }
 
     const formatTime = (timeStr: string) => {
@@ -38,55 +41,66 @@ export default function TodayForecast({ hourlyData }: TodayForecastProps) {
         }))
 
     const containerStyle = {
-        background: 'rgba(255, 255, 255, 0.1)',
+        background: isDark
+            ? 'rgba(30, 41, 59, 0.5)'
+            : 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(12px)',
-        borderRadius: '24px',
-        padding: '2rem',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-        marginBottom: '1.5rem'
+        borderRadius: '20px',
+        padding: '1.5rem',
+        border: isDark
+            ? '1px solid rgba(203, 213, 225, 0.15)'
+            : '1px solid rgba(30, 41, 59, 0.12)',
+        boxShadow: isDark
+            ? '0 10px 15px -3px rgba(0, 0, 0, 0.3)'
+            : '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        marginBottom: '1.25rem'
     }
 
     const headerStyle = {
-        fontSize: '1.25rem',
+        fontSize: '0.875rem',
         fontWeight: '600',
-        marginBottom: '1.5rem',
+        marginBottom: '1.25rem',
         textTransform: 'uppercase' as const,
         letterSpacing: '0.05em',
-        color: 'rgba(255, 255, 255, 0.8)'
+        color: isDark ? 'rgba(203, 213, 225, 0.6)' : 'rgba(30, 41, 59, 0.5)'
     }
 
     const gridStyle = {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-        gap: '1rem'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+        gap: '0.875rem'
     }
 
     const itemStyle = {
-        background: 'rgba(255, 255, 255, 0.05)',
+        background: isDark
+            ? 'rgba(51, 65, 85, 0.4)'
+            : 'rgba(248, 250, 252, 0.8)',
         borderRadius: '12px',
-        padding: '1rem',
+        padding: '0.875rem',
         textAlign: 'center' as const,
-        border: '1px solid rgba(255, 255, 255, 0.1)',
+        border: isDark
+            ? '1px solid rgba(203, 213, 225, 0.08)'
+            : '1px solid rgba(30, 41, 59, 0.08)',
         transition: 'all 0.2s'
     }
 
     const timeStyle = {
-        fontSize: '0.875rem',
-        color: 'rgba(255, 255, 255, 0.7)',
-        marginBottom: '0.75rem',
-        fontWeight: '500'
+        fontSize: '0.8125rem',
+        color: isDark ? 'rgba(203, 213, 225, 0.65)' : 'rgba(30, 41, 59, 0.6)',
+        marginBottom: '0.625rem',
+        fontWeight: '600'
     }
 
     const iconContainerStyle = {
         display: 'flex',
         justifyContent: 'center',
-        marginBottom: '0.75rem'
+        marginBottom: '0.625rem'
     }
 
     const tempStyle = {
-        fontSize: '1.25rem',
-        fontWeight: '600'
+        fontSize: '1.125rem',
+        fontWeight: '600',
+        color: isDark ? '#e2e8f0' : '#1e293b'
     }
 
     return (
@@ -99,15 +113,21 @@ export default function TodayForecast({ hourlyData }: TodayForecastProps) {
                         key={i}
                         style={itemStyle}
                         onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                            e.currentTarget.style.background = isDark
+                                ? 'rgba(51, 65, 85, 0.6)'
+                                : 'rgba(241, 245, 249, 1)'
+                            e.currentTarget.style.transform = 'translateY(-2px)'
                         }}
                         onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                            e.currentTarget.style.background = isDark
+                                ? 'rgba(51, 65, 85, 0.4)'
+                                : 'rgba(248, 250, 252, 0.8)'
+                            e.currentTarget.style.transform = 'translateY(0)'
                         }}
                     >
                         <p style={timeStyle}>{formatTime(item.time)}</p>
                         <div style={iconContainerStyle}>
-                            {getWeatherIcon(item.code, 32)}
+                            {getWeatherIcon(item.code, 28)}
                         </div>
                         <p style={tempStyle}>{Math.round(item.temp)}°C</p>
                     </div>
