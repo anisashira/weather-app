@@ -17,7 +17,7 @@ If you are developing a production application, we recommend updating the config
 
 ```js
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist']),![img.png](img.png)
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

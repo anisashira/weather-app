@@ -1,36 +1,34 @@
-export interface WeatherData {
-    current: {
-        temperature_2m: number
-        apparent_temperature: number
-        weathercode: number
-        windspeed_10m: number
-        relativehumidity_2m: number
-        visibility: number
-        pressure_msl: number
-        time: string
-    }
-    hourly: {
-        time: string[]
-        temperature_2m: number[]
-        weathercode: number[]
-        relativehumidity_2m: number[]
-    }
-    daily: {
-        time: string[]
-        temperature_2m_max: number[]
-        temperature_2m_min: number[]
-        weathercode: number[]
-        windspeed_10m_max: number[]
-        relative_humidity_2m_max: number[]
-    }
-}
+import {
+    WeatherDataSchema,
+    GeocodingResponseSchema,
+    type WeatherData
+} from '../schemas/weatherSchema'
+
+export type { WeatherData }
 
 export async function getWeather(city: string): Promise<WeatherData | null> {
     try {
+        // Step 1: Geocoding - Merr koordinatat e qytetit
         const geoRes = await fetch(
             `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
         )
-        const geoData = await geoRes.json()
+
+        if (!geoRes.ok) {
+            console.error('Geocoding API request failed:', geoRes.status)
+            return null
+        }
+
+        const geoDataRaw = await geoRes.json()
+
+        // Validate geocoding response
+        const geoValidation = GeocodingResponseSchema.safeParse(geoDataRaw)
+
+        if (!geoValidation.success) {
+            console.error('Geocoding validation error:', geoValidation.error.issues)
+            return null
+        }
+
+        const geoData = geoValidation.data
 
         if (!geoData.results?.[0]) {
             console.error('Qyteti nuk u gjet')
@@ -39,6 +37,7 @@ export async function getWeather(city: string): Promise<WeatherData | null> {
 
         const { latitude, longitude } = geoData.results[0]
 
+        // Step 2: Weather API - Merr të dhënat e motit
         const weatherRes = await fetch(
             `https://api.open-meteo.com/v1/forecast?` +
             `latitude=${latitude}&longitude=${longitude}` +
@@ -48,8 +47,23 @@ export async function getWeather(city: string): Promise<WeatherData | null> {
             `&timezone=auto&forecast_days=7`
         )
 
-        const weatherData = await weatherRes.json()
-        return weatherData
+        if (!weatherRes.ok) {
+            console.error('Weather API request failed:', weatherRes.status)
+            return null
+        }
+
+        const weatherDataRaw = await weatherRes.json()
+
+        // Validate weather response
+        const weatherValidation = WeatherDataSchema.safeParse(weatherDataRaw)
+
+        if (!weatherValidation.success) {
+            console.error('Weather validation error:', weatherValidation.error.issues)
+            return null
+        }
+
+        return weatherValidation.data
+
     } catch (error) {
         console.error('Gabim gjatë marrjes së motit:', error)
         return null

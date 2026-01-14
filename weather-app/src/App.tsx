@@ -1,9 +1,12 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
-import Favorites from './pages/Favorites'
 import ThemeToggle from './components/ThemeToggle'
 import { Home as HomeIcon, Star } from 'lucide-react'
 import { useThemeStore } from './store/themeStore'
+
+// Lazy load Favorites page
+const Favorites = lazy(() => import('./pages/Favorites'))
 
 function App() {
     const location = useLocation()
@@ -51,7 +54,7 @@ function App() {
                 ? '#e2e8f0'
                 : '#1e293b'
             : isDark
-                ? '#94a3b8'          // gri-blu e errët → shumë më e lexueshme në dark
+                ? '#94a3b8'
                 : 'rgba(30, 41, 59, 0.75)',
         fontWeight: isActive ? '600' : '500',
         textDecoration: 'none',
@@ -63,6 +66,36 @@ function App() {
         margin: '0 auto',
         padding: '2rem 1rem',
     }
+
+    // Loading fallback component
+    const LoadingFallback = () => (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
+            flexDirection: 'column',
+            gap: '1rem'
+        }}>
+            <div style={{
+                width: '3rem',
+                height: '3rem',
+                border: isDark
+                    ? '4px solid rgba(203, 213, 225, 0.2)'
+                    : '4px solid rgba(30, 41, 59, 0.2)',
+                borderTopColor: isDark ? '#e2e8f0' : '#1e293b',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+            }}></div>
+            <p style={{
+                color: isDark ? 'rgba(203, 213, 225, 0.7)' : 'rgba(30, 41, 59, 0.6)',
+                fontSize: '0.875rem',
+                fontWeight: '500'
+            }}>
+                Duke ngarkuar...
+            </p>
+        </div>
+    )
 
     return (
         <div style={appStyle}>
@@ -81,7 +114,7 @@ function App() {
                     >
                         <Link to="/" style={getLinkStyle(location.pathname === '/')}>
                             <HomeIcon size={20} />
-                          Kreu
+                            Ballina
                         </Link>
 
                         <Link to="/favorites" style={getLinkStyle(location.pathname === '/favorites')}>
@@ -92,28 +125,36 @@ function App() {
                 </div>
             </nav>
 
-            {/* Main Content */}
+            {/* Main Content with Suspense */}
             <main style={mainStyle}>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/favorites" element={<Favorites />} />
-                    <Route
-                        path="*"
-                        element={
-                            <div
-                                style={{
-                                    textAlign: 'center',
-                                    fontSize: '1.5rem',
-                                    color: isDark ? '#fca5a5' : '#ef4444',
-                                    padding: '6rem 1rem',
-                                }}
-                            >
-                                404 – Faqja nuk u gjet
-                            </div>
-                        }
-                    />
-                </Routes>
+                <Suspense fallback={<LoadingFallback />}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/favorites" element={<Favorites />} />
+                        <Route
+                            path="*"
+                            element={
+                                <div
+                                    style={{
+                                        textAlign: 'center',
+                                        fontSize: '1.5rem',
+                                        color: isDark ? '#fca5a5' : '#ef4444',
+                                        padding: '6rem 1rem',
+                                    }}
+                                >
+                                    404 – Faqja nuk u gjet
+                                </div>
+                            }
+                        />
+                    </Routes>
+                </Suspense>
             </main>
+
+            <style>{`
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     )
 }

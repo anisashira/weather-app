@@ -1,11 +1,8 @@
-
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-// import { getWeather, WeatherData } from '../services/weatherApi'
 import { useWeatherStore } from '../store/weatherStore'
-import { getWeather } from '../services/weatherApi'
 import { useThemeStore } from '../store/themeStore'
-import type { WeatherData } from '../services/weatherApi'
+import { useWeather } from '../hooks/useWeather'
 import CurrentWeather from '../components/CurrentWeather'
 import AirConditions from '../components/AirConditions'
 import TodayForecast from '../components/TodayForecast'
@@ -16,39 +13,25 @@ export default function Home() {
     const [searchParams] = useSearchParams()
     const [city, setCity] = useState('Tirana')
     const [searchInput, setSearchInput] = useState('Tirana')
-    const [loading, setLoading] = useState(false)
-    const [weatherData, setWeatherData] = useState<WeatherData | null>(null)
 
     const { addFavorite, removeFavorite, isFavorite } = useWeatherStore()
     const isDark = useThemeStore((state) => state.isDark)
+
+    // Përdor custom hook për të marrë motin
+    const { data: weatherData, loading, error } = useWeather(city)
 
     useEffect(() => {
         const cityFromUrl = searchParams.get('city')
         if (cityFromUrl) {
             setSearchInput(cityFromUrl)
-            fetchWeather(cityFromUrl)
-        } else {
-            fetchWeather('Tirana')
+            setCity(cityFromUrl)
         }
     }, [searchParams])
-
-    const fetchWeather = async (cityName: string) => {
-        setLoading(true)
-        const data = await getWeather(cityName)
-        setLoading(false)
-
-        if (data && data.current) {
-            setWeatherData(data)
-            setCity(cityName)
-        } else {
-            alert('Qyteti nuk u gjet ose pati problem me API-në')
-        }
-    }
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
         if (searchInput.trim()) {
-            fetchWeather(searchInput)
+            setCity(searchInput)
         }
     }
 
@@ -169,6 +152,21 @@ export default function Home() {
         fontWeight: '500'
     }
 
+    const errorStyle = {
+        textAlign: 'center' as const,
+        padding: '3rem 1rem',
+        background: isDark
+            ? 'rgba(239, 68, 68, 0.1)'
+            : 'rgba(239, 68, 68, 0.05)',
+        borderRadius: '16px',
+        border: isDark
+            ? '1px solid rgba(239, 68, 68, 0.3)'
+            : '1px solid rgba(239, 68, 68, 0.2)',
+        color: isDark ? '#fca5a5' : '#dc2626',
+        fontSize: '1rem',
+        fontWeight: '500'
+    }
+
     const gridStyle = {
         display: 'grid',
         gridTemplateColumns: '1fr',
@@ -257,8 +255,15 @@ export default function Home() {
                 </div>
             )}
 
+            {/* Error State */}
+            {error && !loading && (
+                <div style={errorStyle}>
+                    ⚠️ {error}
+                </div>
+            )}
+
             {/* Weather Data */}
-            {weatherData && !loading && (
+            {weatherData && !loading && !error && (
                 <div style={gridStyle}>
                     <div style={{
                         display: 'grid',
