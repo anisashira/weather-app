@@ -1,144 +1,130 @@
-# React + TypeScript + Vite
+Weather Forecasting App
+A modern, feature-rich weather application built with React, TypeScript, and Zustand. 
+Demonstrates best practices in component architecture, state management, API integration, and testing.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Links
 
-Currently, two official plugins are available:
+Live Demo: https://weatherapp-3212.netlify.app/
+Repository: https://github.com/anisashira/weather-app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+--Features
+Core Functionality
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- City Search - Real-time weather search for any location worldwide
+- Current Weather - Temperature, humidity, wind speed, visibility, and atmospheric pressure
+- 7-Day Forecast - Extended weather predictions with min/max temperatures
+- Hourly Forecast - Next 6 hours of detailed weather data
+- Favorites System - Save and manage favorite cities with persistent storage
 
-## Expanding the ESLint configuration
+--UI/UX
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Dark/Light Mode - Automatic system preference detection + manual toggle
+- Fully Responsive - Optimized for mobile, tablet, and desktop devices
+- Modern Design - Glassmorphism effects, smooth animations, and hover states
+- Accessible - ARIA labels and semantic HTML
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),![img.png](img.png)
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+--Technical
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Lazy Loading - Code-splitting with React.lazy and Suspense
+- Local Storage - Persistent theme preferences and favorites
+- Type Safety - Full TypeScript implementation
+- Schema Validation - API response validation with Zod
+-  Unit Tested - Vitest + React Testing Library
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+-- Tech Stack
+Category     Technologies
+Frontend     React 18, TypeScript
+Build        ToolVite
+API          Open-Meteo API (Geocoding + Forecast)
+Testing      Vitest, React Testing Library, @testing-library/user-event
+Icons        Lucide React
+Styling      CSS-in-JS (Inline Styles with dynamic theming)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+--Installation
+# Navigate to project directory
+cd weather-app
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Install dependencies
+npm install
 
-🌤️ Weather Forecast App (React)
-A modern React + TypeScript weather application demonstrating scalable component architecture, 
-state management with Zustand, and clean UI patterns.
+# Start development server
+npm run dev
 
-🔗 Live Demo: (add deployment link)
-📦 Repository: (this repo)
+Available Scripts
+bash# Development
+npm run dev          # Start dev server with hot reload
 
-⚛️ React-Focused Features
-Built with React 19 and TypeScript
-Extensive use of React Hooks (useState, useEffect, custom hooks)
-Custom hook (useWeather) for data fetching and logic separation
-Zustand for global state management
-React Router for client-side navigation
-Lazy-loaded routes for performance optimization
+# Build
+npm run build        # Create optimized production build
+npm run preview      # Preview production build locally
 
-Application Features
-Real-time weather data
-7-day & hourly forecast
-City search with geocoding
-Favorites system with persistence
-Dark / Light theme toggle
-Fully responsive UI
+# Testing
+npm test             # Run tests once
+npm run test:watch   # Run tests in watch mode
+npm run test:ui      # Open Vitest UI
 
-Architecture & Best Practices
-Component-based, reusable UI design
-Clear separation of concerns:
-UI components
-Hooks (business logic)
-API services
-Global state
-Type-safe API responses using Zod
-Memoization to prevent unnecessary re-renders
-LocalStorage synchronization for theme & favorites
+# Linting
+npm run lint         # Run ESLint
 
-Tech Stack
-React 19
-TypeScript
-Vite
-Zustand
-React Router
-Zod
-Open-Meteo API
-Vitest + React Testing Library
 
-Testing
-Unit tests for:
-Theme toggle logic
-Custom React hooks
-Focus on predictable state and UI behavior
+Architecture & Design Decisions
+Component Architecture
 
-src/
-├── components/   // Reusable React components
-├── hooks/        // Custom React hooks
-├── pages/        // Route-based pages
-├── store/        // Zustand state
-├── services/     // API layer
-├── schemas/      // Zod validation
+Separation of Concerns: UI components, pages, hooks, and services are cleanly separated
+Reusable Components: All components accept props and can be used in different contexts
+Custom Hooks: Business logic abstracted into useWeather hook
+Lazy Loading: Favorites page is lazy-loaded for better performance
 
-Why This Project?
-Built to showcase:
-Real-world React application structure
-State management beyond basic hooks
-Clean separation of logic and UI
-Performance-aware React development
-Testing mindset in frontend projects
+State Management Strategy
+
+Zustand for global state (theme preferences, favorites list)
+Persist Middleware for automatic localStorage synchronization
+Local State (useState) for component-specific UI state
+Custom Hooks for encapsulating data fetching and side effects
+
+API Integration
+
+Service Layer: All API calls abstracted in weatherApi.ts
+Schema Validation: Every API response validated with Zod schemas
+Error Handling: Graceful error states with user-friendly messages
+Type Safety: TypeScript types derived from Zod schemas
+
+Why Inline Styles Instead of Tailwind?
+This project uses inline styles with dynamic theme values for:
+
+Dynamic Theming: Direct access to theme state for real-time style updates
+Component Colocation: Styles live with components, no context switching
+Type Safety: Full TypeScript autocomplete for style objects
+Zero Build Overhead: No CSS parsing or purging needed
+
+
+Features in Detail
+Dark/Light Mode
+
+Detects system preference automatically on first load
+Manual toggle persists user choice in localStorage
+Smooth transitions between themes
+All components respond dynamically to theme changes
+
+Favorites System
+
+Add/remove cities with star button
+Favorites persist across browser sessions
+Optional: Load current weather for all favorites at once
+Navigate to home page with pre-filled city from favorites
+
+Error Handling
+
+User-friendly error messages (e.g., "City not found")
+Loading states with spinners
+Graceful degradation if API is unavailable
+Form validation for empty inputs
 
 Anisa Shira
 React / Frontend Developer
-GitHub: https://github.com/yourusername
-LinkedIn: https://linkedin.com/in/yourprofile
+
+GitHub: https://github.com/anisashira
+LinkedIn: https://www.linkedin.com/in/anisa-shira-67ba78299/
+Email: anisashira15@gmail.com

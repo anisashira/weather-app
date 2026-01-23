@@ -114,7 +114,7 @@ function App() {
                     >
                         <Link to="/" style={getLinkStyle(location.pathname === '/')}>
                             <HomeIcon size={20} />
-                            Ballina
+                            Home
                         </Link>
 
                         <Link to="/favorites" style={getLinkStyle(location.pathname === '/favorites')}>

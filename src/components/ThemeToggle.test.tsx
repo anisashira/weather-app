@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event'
 import ThemeToggle from '../components/ThemeToggle'
 import { useThemeStore } from '../store/themeStore'
 
+import '@testing-library/jest-dom'
+
 describe('ThemeToggle Component', () => {
     beforeEach(() => {
         // Reset theme state before each test
