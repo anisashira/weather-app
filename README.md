@@ -15,7 +15,7 @@ Core Functionality
 - Current Weather - Temperature, humidity, wind speed, visibility, and atmospheric pressure
 - 7-Day Forecast - Extended weather predictions with min/max temperatures
 - Hourly Forecast - Next 6 hours of detailed weather data
-- Favorites System - Save and manage favorite cities with persistent storage
+  - Favorites System - Save and manage favorite cities with persistent storage
 
 --UI/UX
 
